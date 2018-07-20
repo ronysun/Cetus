@@ -1,0 +1,10 @@
+SDK.compute.ServerCreate:
+#SDK.image.imagesList:
+  -
+    args:
+      name: test2
+      image: centos74
+      flavor: FLAVOR1
+    sla:
+      status: active
+      wait: 10

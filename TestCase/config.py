@@ -10,3 +10,5 @@ username = 'sln'
 password = '1q2w3e'
 user_domain_name = 'Default'
 project_domain_name = 'Default'
+
+html_template = "/root/sln/Cetus/report_template.html"

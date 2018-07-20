@@ -14,13 +14,13 @@ class ServerCreate(base.SDKbase):
         self.result = None
 
     def run(self, **kwargs):
-        LOG.info("ServerCrate with: %s" % str(kwargs))
-        print "run in ServerCreate"
-        servers = self.client.create_server(**kwargs)
-        self.result = servers['id']
+        try:
+            servers = self.client.create_server(**kwargs)
+            self.result = servers['id']
+        except:
+            LOG.error("run error!")
 
     def sla(self, **kwargs):
-        LOG.info("sla in ServerCreate")
         for loop in range(kwargs.get('wait', 1)):
             time.sleep(1)
             server_status = self.client.get_server(self.result)['vm_state']
@@ -29,8 +29,9 @@ class ServerCreate(base.SDKbase):
                 LOG.info("case pass")
                 return 'p', "case pass", "ironic-13"
         else:
-            return 'f', 'case failed'
+            LOG.info("case failed")
+            return 'f', 'case failed', "ironic-13"
 
     def clean_up(self):
-        LOG.debug("CLEAN UP in ServerCreate")
+        LOG.info("CLEAN UP in ServerCreate")
         self.client.delete_server(self.result)
