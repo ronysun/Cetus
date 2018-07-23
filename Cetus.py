@@ -82,7 +82,7 @@ def generate_html_report(logfile, html_template=config.html_template):
     css_case_pass = {'class': 'btbg2 font-center passfont', 'width': "25%"}
 
     with open(html_template) as f:
-        template = BeautifulSoup(f)
+        template = BeautifulSoup(f, "lxml")
     # logfile_name = "log/" + logfile
     total = 0
     pass_count = 0
