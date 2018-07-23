@@ -1,3 +1,5 @@
+#coding=utf-8
+
 import testlink
 import TestCase.config as config
 class testlinkConnection(testlink.TestlinkAPIClient):
