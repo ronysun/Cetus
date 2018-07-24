@@ -1,12 +1,11 @@
-import TestCase.SDK.base as base
 import time
 import random
 import logging
+import functools
+import TestCase.SDK.base as base
 
 LOG = logging.getLogger("testSuit")
-class serversList(base.SDKbase):
-    def run(self):
-        print self.client.list_images()
+
 
 class ServerCreate(base.SDKbase):
 
@@ -20,6 +19,7 @@ class ServerCreate(base.SDKbase):
         except:
             LOG.error("run error!")
 
+    @base.SDKbase.testlink(testlink_id="OS-1")
     def sla(self, **kwargs):
         for loop in range(kwargs.get('wait', 1)):
             time.sleep(1)
@@ -27,10 +27,10 @@ class ServerCreate(base.SDKbase):
             print server_status
             if server_status == kwargs.get('status'):
                 LOG.info("case pass")
-                return 'p', "case pass", "OS-1"
+                return 'p', 'case pass'
         else:
             LOG.info("case failed")
-            return 'f', 'case failed', "OS-1"
+            return 'f', 'case failed'
 
     def clean_up(self):
         LOG.info("CLEAN UP in ServerCreate")
@@ -43,7 +43,7 @@ class ServerDelete(base.SDKbase):
         self.context = None
 
     def setup(self, **kwargs):
-        random_name = "Cetus" + random.randint(0,100)
+        random_name = "Cetus" + random.randint(0, 100)
         name = kwargs.get('name', random_name)
         image = kwargs.get('image', 'ccad6f49-cac3-43b5-8051-0de5dce462c5')
         flavor = kwargs.get('flavor', 'FLAVOR1')
@@ -64,16 +64,17 @@ class ServerDelete(base.SDKbase):
         except:
             LOG.error("run error!")
 
+    @base.SDKbase.testlink(testlink_id="OS-2")
     def sla(self, **kwargs):
         for loop in xrange(kwargs.get('wait', 1)):
             time.sleep(1)
             try:
                 self.client.get_server(self.context)
                 LOG.error("case failed")
-                return 'f', 'case failed', "OS-2"
+                return 'f', 'case failed'
             except:
                 LOG.info("case pass")
-                return 'p', "case pass", "OS-2"
+                return 'p', "case pass"
 
     def clean_up(self):
         pass

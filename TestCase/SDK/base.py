@@ -1,5 +1,5 @@
 import openstack
-import TestCase.config as config
+import functools
 from common import auth
 
 
@@ -8,3 +8,15 @@ class SDKbase(object):
         auth_info = auth.get_auth_info()
         self.client = openstack.connection.Connection(**auth_info)
         self.result = None
+
+    @staticmethod
+    def testlink(testlink_id=None):
+        def decorator(func):
+            functools.wraps(func)
+
+            def wrapper(*args, **kwargs):
+                return func(*args, **kwargs), testlink_id
+
+            return wrapper
+
+        return decorator

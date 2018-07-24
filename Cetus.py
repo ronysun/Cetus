@@ -61,7 +61,7 @@ def run_case(casefile):
                 case.run(**task_args)
                 task_sla = task.get('sla')
                 LOG.info("run result check: %s" % str(task_sla))
-                result, notes, testlink_testcase_external_id = case.sla(**task_sla)
+                (result, notes), testlink_testcase_external_id = case.sla(**task_sla)
                 RESULT.info(','.join((testlink_testcase_external_id, result, notes)))
                 # report result to testlink
                 tsl.report_result(testlink_testcase_external_id, result, notes)
