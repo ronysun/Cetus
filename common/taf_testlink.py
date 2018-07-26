@@ -1,7 +1,11 @@
 #coding=utf-8
 
 import testlink
+import logging
 import TestCase.config as config
+
+LOG = logging.getLogger("testlog")
+
 class testlinkConnection(testlink.TestlinkAPIClient):
     def __init__(self, url, key):
         super(testlinkConnection, self).__init__(url, key)
@@ -12,16 +16,14 @@ class testlinkConnection(testlink.TestlinkAPIClient):
             if project['name'] == project_name:
                 return project['id']
         else:
-            # TODO: use logmodule
-            print "project: %s was not found!" % project_name
+            LOG.info("project: %s was not found!" % project_name)
 
     def get_test_plan_id(self, test_plan, project_id):
         for plan in self.client.getProjectTestPlans(project_id):
             if plan['name'] == test_plan:
                 return plan['id']
         else:
-            # TODO: use log module
-            print "test plane was not found!"
+            LOG.info("test plane was not found!")
 
     def get_testcase_id(self, testcaseexternalid):
         return self.client.getTestCase(testcaseexternalid=testcaseexternalid)[0]['testcase_id']

@@ -12,11 +12,16 @@ class SDKbase(object):
     @staticmethod
     def testlink(testlink_id=None):
         def decorator(func):
-            functools.wraps(func)
-
+            @functools.wraps(func)
             def wrapper(*args, **kwargs):
                 return func(*args, **kwargs), testlink_id
 
             return wrapper
 
         return decorator
+
+    def setup(self):
+        pass
+
+    def teardown(self):
+        pass
