@@ -1,0 +1,4 @@
+caselist:
+  TestCase/scenarios/SDK/serverCreate.yaml
+  TestCase/scenarios/SDK/serverList.yaml
+  TestCase/scenarios/SDK/serverDelete.yaml

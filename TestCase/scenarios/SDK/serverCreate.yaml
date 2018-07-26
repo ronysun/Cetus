@@ -3,7 +3,7 @@ SDK.compute.ServerCreate:
   -
     args:
       name: test2
-      image: centos74
+      image: ccad6f49-cac3-43b5-8051-0de5dce462c5
       flavor: FLAVOR1
     sla:
       status: active

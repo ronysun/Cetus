@@ -7,4 +7,4 @@ SDK.compute.ServerCreate:
       flavor: FLAVOR1
     sla:
       status: active
-      wait: 10
+      wait: 1
