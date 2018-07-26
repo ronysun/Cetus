@@ -18,7 +18,7 @@ class ServerCreate(SDK.SDKbase):
             servers = self.client.create_server(**kwargs)
             self.result = servers['id']
         except:
-            LOG.error("run error!")
+            LOG.error("Create VM error!")
 
     @taf_log.debug_log
     @SDK.SDKbase.testlink(testlink_id="OS-1")

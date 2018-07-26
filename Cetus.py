@@ -89,4 +89,5 @@ if __name__ == "__main__":
         run_case(sys.argv[1])
 
     report_file = file((test_log_name + '.html'), "w")
-    taf_log.generate_html_report(report_file, TestSuitResult, config.html_template)
+    result_log = "log/" + TestSuitResult
+    taf_log.generate_html_report(report_file, result_log, config.html_template)

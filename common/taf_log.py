@@ -28,7 +28,6 @@ def generate_html_report(report_file, log_file, html_template):
         total = int(log_csv.line_num)
         data_dict = {'TOTAL': total, 'PASS': pass_count, 'FAILED': failed_count, 'OTHER': other_count, 'entries': entries}
     outputText = template.render(data_dict)
-    print outputText
     report_file.write(outputText.encode('utf-8'))
     report_file.close()
 
