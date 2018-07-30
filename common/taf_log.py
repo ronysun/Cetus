@@ -34,6 +34,6 @@ def generate_html_report(report_file, log_file, html_template):
 def debug_log(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
-        LOG.info("function: %s -- args:  %s" % (func.__name__, kwargs))
+        LOG.info("function: %s %s-- args:  %s" % (args[0], func.__name__, args[1]))
         return func(*args, **kwargs)
     return wrapper

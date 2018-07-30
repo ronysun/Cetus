@@ -43,6 +43,19 @@ def instance_case_class(module, _class_name, _module_path="TestCase"):
     except ImportError:
         LOG.error("Not found module: %s, or class: %s" % (_module, _class_name))
 
+def setup_test_env():
+    test_image_name = 'Cetus_cirros'
+    test_flavor_name = "mini.ty1"
+    import TestCase.SDK.utils as SDK
+    OSclient = SDK.SDKbase(admin=True)
+    image = OSclient.client.get_image(test_image_name)
+    if image is None:
+        os.system('wget http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img -O cirros-0.3.5-x86_64-disk.img')
+        OSclient._image_create(test_image_name, filename='cirros-0.3.5-x86_64-disk.img', disk_forma='qcow2')
+
+    flavor = OSclient.client.get_flavor(test_flavor_name)
+    if flavor is None:
+        OSclient.client.create_flavor(test_flavor_name, 1024, 1, 40)
 
 def run_case(casefile):
     try:
@@ -57,17 +70,11 @@ def run_case(casefile):
         LOG.info('** TASK NAME: %s **', task_class_name)
         LOG.info('*' * len(task_name_info))
         case = instance_case_class(task_module_name, task_class_name)
-        for tasks in d.values():
-            for task in tasks:
-                task_args = task.get('args')
-                case.setup()
-                case.run(**task_args)
-                task_sla = task.get('sla')
-                ((result, notes), testlink_testcase_external_id) = case.sla(**task_sla)
-                RESULT.info(','.join((testlink_testcase_external_id, result, notes)))
-                # report result to testlink
-                tsl.report_result(testlink_testcase_external_id, result, notes)
-                case.teardown()
+        steps = d[d.keys()[0]]['steps']
+        sla = d[d.keys()[0]]['sla']
+        case.run(steps)
+        case.sla(sla)
+
     except IOError:
         error_message = "%s File was not found!" % casefile
         LOG.error('*' * len(error_message))
@@ -77,17 +84,20 @@ def run_case(casefile):
 
 
 if __name__ == "__main__":
-    with open(sys.argv[1]) as f:
-        d = yaml.safe_load(f)
-
-    if "caselist" in d.keys():
-        for cases in d.values():
-            for case in cases.split(' '):
-                real_path = os.path.dirname(sys.argv[0]) + '/' + case
-                run_case(real_path)
+    if sys.argv[1] == 'init':
+        setup_test_env()
     else:
-        run_case(sys.argv[1])
+        with open(sys.argv[1]) as f:
+            d = yaml.safe_load(f)
 
-    report_file = file((test_log_name + '.html'), "w")
-    result_log = "log/" + TestSuitResult
-    taf_log.generate_html_report(report_file, result_log, config.html_template)
+        if "caselist" in d.keys():
+            for cases in d.values():
+                for case in cases.split(' '):
+                    real_path = os.path.dirname(sys.argv[0]) + '/' + case
+                    run_case(real_path)
+        else:
+            run_case(sys.argv[1])
+
+    # report_file = file((test_log_name + '.html'), "w")
+    # result_log = "log/" + TestSuitResult
+    # taf_log.generate_html_report(report_file, result_log, config.html_template)
