@@ -1,9 +1,27 @@
+import sys
 import csv
 import jinja2
 import functools
 import logging
 
 LOG = logging.getLogger("testlog")
+RESULT = logging.getLogger('result')
+
+def test_log(test_log_file):
+    logfile = logging.FileHandler("log/" + test_log_file)
+    logfile.setFormatter(logging.Formatter('%(levelname)s:%(asctime)s %(funcName)s: %(message)s'))
+
+    LOG.addHandler(logging.StreamHandler(sys.stdout))
+    LOG.addHandler(logfile)
+    LOG.setLevel(logging.DEBUG)
+
+def result_log(result_log_file):
+    result_file = logging.FileHandler("log/" + result_log_file)
+    result_file.setFormatter(logging.Formatter('%(message)s'))
+
+    RESULT.addHandler(result_file)
+    RESULT.setLevel(logging.INFO)
+
 
 def generate_html_report(report_file, log_file, html_template):
     pass_count = 0

@@ -9,25 +9,17 @@ import common.taf_testlink as testlink
 import TestCase.config as config
 
 
+
 test_log_name = sys.argv[1].split('.')[0]
 current_time = time.strftime("-%Y-%m-%d-%H-%M-%S")
 TestSuitLog = test_log_name  + current_time + ".log"
 TestSuitResult = "Result-" + test_log_name  + current_time + ".csv"
 
-logfile = logging.FileHandler("log/" + TestSuitLog)
-logfile.setFormatter(logging.Formatter('%(levelname)s:%(asctime)s %(funcName)s: %(message)s'))
+test_log = taf_log.test_log(TestSuitLog)
+result_log = taf_log.result_log(TestSuitResult)
 
-LOG = logging.getLogger("testlog")
-LOG.addHandler(logging.StreamHandler(sys.stdout))
-LOG.addHandler(logfile)
-LOG.setLevel(logging.DEBUG)
-
-result_file = logging.FileHandler("log/" + TestSuitResult)
-result_file.setFormatter(logging.Formatter('%(message)s'))
-
-RESULT = logging.getLogger("result")
-RESULT.addHandler(result_file)
-RESULT.setLevel(logging.INFO)
+LOG = logging.getLogger('testlog')
+RESULT = logging.getLogger('result')
 
 # instance Testlink connection
 tsl = testlink.testlinkConnection(config.testlink_url, config.testlink_key)
@@ -73,7 +65,11 @@ def run_case(casefile):
         steps = d[d.keys()[0]]['steps']
         sla = d[d.keys()[0]]['sla']
         case.run(steps)
-        case.sla(sla)
+        ((result, notes), testlink_testcase_external_id) = case.sla(sla)
+        RESULT.info(','.join((testlink_testcase_external_id, result, notes)))
+        # report result to testlink
+        tsl.report_result(testlink_testcase_external_id, result, notes)
+
 
     except IOError:
         error_message = "%s File was not found!" % casefile
