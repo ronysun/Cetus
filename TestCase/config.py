@@ -14,6 +14,10 @@ password = '1q2w3e'
 user_domain_name = 'Default'
 project_domain_name = 'Default'
 
+admin_user = 'admin'
+admin_password = 'ADMIN_PASS'
+
+
 html_template = "/root/sln/Cetus/report_template.html"
 
 report_file = "root/sln/Cetus/"

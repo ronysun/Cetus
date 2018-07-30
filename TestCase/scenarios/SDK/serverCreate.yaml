@@ -1,10 +1,9 @@
 SDK.compute.ServerCreate:
-#SDK.image.imagesList:
-  -
-    args:
-      name: test2
-      image: ccad6f49-cac3-43b5-8051-0de5dce462c5
-      flavor: FLAVOR1
-    sla:
-      status: active
-      wait: 10
+  steps:
+    - create one VM:
+        name: test2
+        image: Cetus_cirros
+        flavor: mini.ty1
+  sla:
+    wait: 5
+    status: active
