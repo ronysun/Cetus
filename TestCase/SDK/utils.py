@@ -1,7 +1,9 @@
 import openstack
 import functools
+import logging
 from common import auth
 
+LOG = logging.getLogger('testlog')
 
 class SDKbase(object):
     def __init__(self, auth_info=auth.get_auth_info(), admin=False):
@@ -31,7 +33,11 @@ class SDKbase(object):
         pass
 
     def _boot_server(self, name, image, flavor, **kwargs):
-        return self.client.create_server(name, image=image, flavor=flavor, **kwargs)
+        try:
+            server = self.client.create_server(name, image=image, flavor=flavor, **kwargs)
+            return server
+        except Exception as e:
+            LOG.error(e)
 
     def _delete_server(self, name_or_id, **kwargs ):
         return self.client.delete_server(name_or_id, **kwargs)

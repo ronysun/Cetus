@@ -61,10 +61,10 @@ def run_case(casefile):
     try:
         with open(casefile) as f:
             d = yaml.safe_load(f)
-        casename = d.keys()[0]
-        task_module_path = casename.split('.')[:-1]
+        case_name = d.keys()[0]
+        task_module_path = case_name.split('.')[:-1]
         task_module_name = ".".join(task_module_path)
-        task_class_name = casename.split('.')[-1]
+        task_class_name = case_name.split('.')[-1]
         task_name_info = '** TASK NAME: %s **' % task_class_name
         LOG.info('*' * len(task_name_info))
         LOG.info('** TASK NAME: %s **', task_class_name)
@@ -98,6 +98,6 @@ if __name__ == "__main__":
         else:
             run_case(sys.argv[1])
 
-    # report_file = file((test_log_name + '.html'), "w")
-    # result_log = "log/" + TestSuitResult
-    # taf_log.generate_html_report(report_file, result_log, config.html_template)
+    report_file = file((test_log_name + '.html'), "w")
+    result_log = "log/" + TestSuitResult
+    taf_log.generate_html_report(report_file, result_log, config.html_template)

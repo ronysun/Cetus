@@ -18,14 +18,11 @@ class ServerCreate(SDK.SDKbase):
 
     @taf_log.debug_log
     def run(self, kwargs):
-        try:
-            step = 0
-            values = kwargs[step].values()
-            server = self._boot_server(**values[0])
+        step = 0
+        values = kwargs[step].values()
+        server = self._boot_server(**values[0])
+        if server:
             self.context = server['id']
-        except:
-            LOG.error("Create VM error!")
-            raise
 
     @taf_log.debug_log
     @SDK.SDKbase.testlink(testlink_id="OS-1")
@@ -56,7 +53,8 @@ class ServerDelete(SDK.SDKbase):
     @taf_log.debug_log
     def run(self, kwargs):
         server = self._boot_server(**kwargs[0].values()[0])
-        self.context=server['id']
+        if server:
+            self.context=server['id']
         result = self._delete_server(server['id'], **kwargs[1].values()[0])
         if result:
             LOG.info('VM delete')
