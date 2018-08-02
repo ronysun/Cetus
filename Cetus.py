@@ -67,6 +67,7 @@ def run_case(casefile):
         case.run(steps)
         ((result, notes), testlink_testcase_external_id) = case.sla(sla)
         RESULT.info(','.join((testlink_testcase_external_id, result, notes)))
+        case.teardown()
         # report result to testlink
         tsl.report_result(testlink_testcase_external_id, result, notes)
 

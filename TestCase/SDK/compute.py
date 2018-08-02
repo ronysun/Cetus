@@ -1,5 +1,4 @@
 import time
-import random
 import logging
 import common.taf_log as taf_log
 import TestCase.SDK.utils as SDK
@@ -20,7 +19,7 @@ class ServerCreate(SDK.SDKbase):
     def run(self, kwargs):
         step = 0
         values = kwargs[step].values()
-        server = self._boot_server(**values[0])
+        server = self.create_server(**values[0])
         if server:
             self.context = server['id']
 
@@ -29,7 +28,7 @@ class ServerCreate(SDK.SDKbase):
     def sla(self, kwargs):
         for loop in range(kwargs.get('wait', 1)):
             time.sleep(1)
-            server_status = self._get_server(self.context)['vm_state']
+            server_status = self.get_server(self.context)['vm_state']
             if server_status == kwargs.get('status'):
                 LOG.info("case pass")
                 return 'p', 'case pass'
@@ -39,7 +38,7 @@ class ServerCreate(SDK.SDKbase):
 
     def teardown(self):
         LOG.info("teardown in ServerCreate")
-        self._delete_server(self.context)
+        self.delete_server(self.context)
 
 
 class ServerDelete(SDK.SDKbase):
@@ -52,10 +51,10 @@ class ServerDelete(SDK.SDKbase):
 
     @taf_log.debug_log
     def run(self, kwargs):
-        server = self._boot_server(**kwargs[0].values()[0])
+        server = self.create_server(**kwargs[0].values()[0])
         if server:
-            self.context=server['id']
-        result = self._delete_server(server['id'], **kwargs[1].values()[0])
+            self.context = server['id']
+        result = self.delete_server(server['id'], **kwargs[1].values()[0])
         if result:
             LOG.info('VM delete')
         else:
@@ -66,7 +65,7 @@ class ServerDelete(SDK.SDKbase):
     def sla(self, kwargs):
         for loop in xrange(kwargs.get('wait', 1)):
             time.sleep(1)
-            result = self._get_server(self.context)
+            result = self.get_server(self.context)
             if result is None:
                 LOG.info("case pass")
                 return 'p', "case pass"

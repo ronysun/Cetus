@@ -3,8 +3,8 @@ SDK.compute.ServerCreate:
   -
     args:
       name: test2
-      image: centos74
-      flavor: FLAVOR1
+      image: Cetus_cirros
+      flavor: mini.ty1
     sla:
       status: active
       wait: 1

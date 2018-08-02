@@ -1,0 +1,13 @@
+---
+SDK.compute.ServerDelete:
+  steps:
+    - create one VM:
+        name: test2
+        image: Cetus_cirros
+        flavor: mini.ty1
+
+    - delete VM:
+        wait: false
+
+  sla:
+    wait: 10
