@@ -1,5 +1,6 @@
 import time
 import logging
+import TestCase.config as config
 import common.taf_log as taf_log
 import TestCase.SDK.utils as SDK
 
@@ -19,17 +20,19 @@ class ServerCreate(SDK.SDKbase):
     def run(self, kwargs):
         step = 0
         values = kwargs[step].values()
+        # server = self.create_server(network=config.ex_network, **values[0])
         server = self.create_server(**values[0])
         if server:
-            self.context = server['id']
+            self.context = server
 
     @taf_log.debug_log
     @SDK.SDKbase.testlink(testlink_id="OS-1")
     def sla(self, kwargs):
         for loop in range(kwargs.get('wait', 1)):
             time.sleep(1)
-            server_status = self.get_server(self.context)['vm_state']
+            server_status = self.get_server(self.context['id'])['vm_state']
             if server_status == kwargs.get('status'):
+
                 LOG.info("case pass")
                 return 'p', 'case pass'
         else:
@@ -38,7 +41,7 @@ class ServerCreate(SDK.SDKbase):
 
     def teardown(self):
         LOG.info("teardown in ServerCreate")
-        self.delete_server(self.context)
+        # self.delete_server(self.context['id'])
 
 
 class ServerDelete(SDK.SDKbase):

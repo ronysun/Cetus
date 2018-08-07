@@ -9,8 +9,9 @@ import common.taf_testlink as testlink
 import TestCase.config as config
 
 
-
-test_log_name = sys.argv[1].split('.')[0]
+cases_file_name = sys.argv[1].split('/')[-1]
+test_log_name = cases_file_name.split('.')[0]
+# test_log_name = sys.argv[1].split('.')[0]
 current_time = time.strftime("-%Y-%m-%d-%H-%M-%S")
 TestSuitLog = test_log_name  + current_time + ".log"
 TestSuitResult = "Result-" + test_log_name  + current_time + ".csv"
@@ -25,12 +26,12 @@ RESULT = logging.getLogger('result')
 tsl = testlink.testlinkConnection(config.testlink_url, config.testlink_key)
 
 
-def instance_case_class(module, _class_name, _module_path="TestCase"):
+def instance_case_class(module, _class_name, _module_path="TestCase", **kwargs):
     _module = _module_path + "." + module
     try:
         _module_instance = importlib.import_module(_module)
         _class = getattr(_module_instance, _class_name)
-        case = _class()
+        case = _class(**kwargs)
         return case
     except ImportError:
         LOG.error("Not found module: %s, or class: %s" % (_module, _class_name))
@@ -90,7 +91,8 @@ if __name__ == "__main__":
         if "caselist" in d.keys():
             for cases in d.values():
                 for case in cases.split(' '):
-                    real_path = os.path.dirname(sys.argv[0]) + '/' + case
+                    file_abspath = '/'.join(os.path.abspath(sys.argv[0]).split('/')[:-1])
+                    real_path = file_abspath + '/' + case
                     run_case(real_path)
         else:
             run_case(sys.argv[1])
