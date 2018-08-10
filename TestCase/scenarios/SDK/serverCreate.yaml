@@ -1,9 +1,11 @@
 SDK.compute.ServerCreate:
   steps:
-    - create one VM:
+    - create_server:
         name: test2
         image: Cetus_cirros
         flavor: mini.ty1
+
   sla:
-    wait: 5
-    status: active
+    - get_server_status:
+        wait: 5
+        status: active

@@ -2,12 +2,12 @@
 SDK.compute.ServerDelete:
   steps:
     - create one VM:
-        name: test2
+        wait_time: 5
+        name: test3
         image: Cetus_cirros
         flavor: mini.ty1
 
     - delete VM:
-        wait: false
-
+        wait: flase
   sla:
     wait: 10

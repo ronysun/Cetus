@@ -5,13 +5,15 @@ from common import auth
 
 LOG = logging.getLogger('testlog')
 
-class SDKbase(connection.Connection):
-    def __init__(self, auth_info=auth.get_auth_info(), admin=False):
-        if admin:
-            auth_info = auth.get_admin_auth_info()
-        super(SDKbase, self).__init__(
-                 **auth_info)
+class base(object):
+    def __init__(self):
         self.result = None
+
+    def gen_args_list(self, kwargs):
+        steps_args = []
+        for step in range(len(kwargs)):
+            steps_args.append(kwargs[step].values()[0])
+        return steps_args
 
     @staticmethod
     def testlink(testlink_id=None):

@@ -11,7 +11,6 @@ import TestCase.config as config
 
 cases_file_name = sys.argv[1].split('/')[-1]
 test_log_name = cases_file_name.split('.')[0]
-# test_log_name = sys.argv[1].split('.')[0]
 current_time = time.strftime("-%Y-%m-%d-%H-%M-%S")
 TestSuitLog = test_log_name  + current_time + ".log"
 TestSuitResult = "Result-" + test_log_name  + current_time + ".csv"
@@ -26,8 +25,8 @@ RESULT = logging.getLogger('result')
 tsl = testlink.testlinkConnection(config.testlink_url, config.testlink_key)
 
 
-def instance_case_class(module, _class_name, _module_path="TestCase", **kwargs):
-    _module = _module_path + "." + module
+def instance_case_class(module, _class_name, case_path="TestCase", **kwargs):
+    _module = case_path + "." + module
     try:
         _module_instance = importlib.import_module(_module)
         _class = getattr(_module_instance, _class_name)
@@ -39,7 +38,7 @@ def instance_case_class(module, _class_name, _module_path="TestCase", **kwargs):
 def setup_test_env():
     test_image_name = 'Cetus_cirros'
     test_flavor_name = "mini.ty1"
-    import TestCase.SDK.utils as SDK
+    import common.utils as SDK
     OSclient = SDK.SDKbase(admin=True)
     image = OSclient.client.get_image(test_image_name)
     if image is None:
@@ -62,11 +61,11 @@ def run_case(casefile):
         LOG.info('*' * len(task_name_info))
         LOG.info('** TASK NAME: %s **', task_class_name)
         LOG.info('*' * len(task_name_info))
-        case = instance_case_class(task_module_name, task_class_name)
-        steps = d[d.keys()[0]]['steps']
-        sla = d[d.keys()[0]]['sla']
+        case = instance_case_class(task_module_name, task_class_name, case_path='TestCase')
+        steps = d[case_name]['steps']
+        sla = d[case_name]['sla']
         case.run(steps)
-        ((result, notes), testlink_testcase_external_id) = case.sla(sla)
+        ((result, notes), testlink_testcase_external_id) = case.check_result(sla)
         RESULT.info(','.join((testlink_testcase_external_id, result, notes)))
         case.teardown()
         # report result to testlink
