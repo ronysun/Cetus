@@ -1,80 +1,83 @@
 import time
 import logging
-import TestCase.config as config
+import common.Case as Case
 import common.taf_log as taf_log
-import TestCase.SDK.utils as SDK
+import common.SDKutils as SDK
 
 LOG = logging.getLogger("testlog")
 
 
-class ServerCreate(SDK.SDKbase):
-
+class ServerCreate(Case.base):
     def __init__(self):
         super(ServerCreate, self).__init__()
-        self.context = None
+        self.SDKconnect = SDK.SDKbase()
+        self.context = {}
 
     def __repr__(self):
         return "ServerCreate"
 
-    @taf_log.debug_log
-    def run(self, kwargs):
-        step = 0
-        values = kwargs[step].values()
-        # server = self.create_server(network=config.ex_network, **values[0])
-        server = self.create_server(**values[0])
-        if server:
-            self.context = server
+    def run(self, steps):
+        steps_args = self.gen_args_list(steps)
+        server = self.SDKconnect.create_server(**steps_args[0])
+        self.context['server'] = server
 
     @taf_log.debug_log
     @SDK.SDKbase.testlink(testlink_id="OS-1")
-    def sla(self, kwargs):
-        for loop in range(kwargs.get('wait', 1)):
+    def check_result(self, kwargs):
+        sla_args = []
+        for args in xrange(len(kwargs)):
+            sla_args.append(kwargs[args].values()[0])
+        for loop in range(sla_args[0]['wait']):
             time.sleep(1)
-            server_status = self.get_server(self.context['id'])['vm_state']
-            if server_status == kwargs.get('status'):
-
+            server_status = self.SDKconnect.get_server(self.context['server']['id'])['vm_state']
+            if server_status == sla_args[0].get('status'):
                 LOG.info("case pass")
-                return 'p', 'case pass'
+                _result = 'p'
+                _notes = 'case pass'
+                break
         else:
             LOG.info("case failed")
-            return 'f', 'case failed'
+            _result = 'f'
+            _notes = 'case failed'
+
+        return _result, _notes
 
     def teardown(self):
         LOG.info("teardown in ServerCreate")
-        # self.delete_server(self.context['id'])
+        self.SDKconnect.delete_server(self.context['server']['id'])
 
-
-class ServerDelete(SDK.SDKbase):
+class ServerDelete(Case.base):
     def __init__(self):
         super(ServerDelete, self).__init__()
+        self.SDK = SDK.SDKbase()
         self.context = None
 
     def __repr__(self):
         return "ServerDelete"
 
     @taf_log.debug_log
-    def run(self, kwargs):
-        server = self.create_server(**kwargs[0].values()[0])
+    def run(self, steps):
+        steps_args = self.gen_args_list(steps)
+        server = self.SDK.create_server_and_wait_active(**steps_args[0])
+        print server
         if server:
-            self.context = server['id']
-        result = self.delete_server(server['id'], **kwargs[1].values()[0])
-        if result:
-            LOG.info('VM delete')
-        else:
-            LOG.error('VM delete error!')
+            self.context = server
+            self.SDK.delete_server(server['id'], **steps_args[1])
 
     @taf_log.debug_log
     @SDK.SDKbase.testlink(testlink_id="OS-2")
-    def sla(self, kwargs):
+    def check_result(self, kwargs):
         for loop in xrange(kwargs.get('wait', 1)):
             time.sleep(1)
-            result = self.get_server(self.context)
+            result = self.SDK.get_server(self.context['id'])
             if result is None:
                 LOG.info("case pass")
-                return 'p', "case pass"
+                _result = 'p'
+                _notes = 'case pass'
+                break
         else:
             LOG.info("case failed")
-            return 'f', 'case failed'
+            _result = 'f'
+            _notes = 'case failed'
 
-    def teardown(self):
-        LOG.info("teardown context")
+        return _result, _notes
