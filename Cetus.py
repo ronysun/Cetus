@@ -64,10 +64,12 @@ def run_case(casefile):
         case = instance_case_class(task_module_name, task_class_name, case_path='TestCase')
         steps = d[case_name]['steps']
         sla = d[case_name]['sla']
-        case.run(steps)
-        ((result, notes), testlink_testcase_external_id) = case.check_result(sla)
-        RESULT.info(','.join((testlink_testcase_external_id, result, notes)))
-        case.teardown()
+        try:
+            case.run(steps)
+            ((result, notes), testlink_testcase_external_id) = case.check_result(sla)
+            RESULT.info(','.join((testlink_testcase_external_id, result, notes)))
+        finally:
+            case.teardown()
         # report result to testlink
         tsl.report_result(testlink_testcase_external_id, result, notes)
 
