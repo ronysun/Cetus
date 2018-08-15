@@ -10,4 +10,5 @@ SDK.compute.ServerDelete:
     - delete VM:
         wait: flase
   sla:
-    wait: 10
+    - SDK get server:
+        wait: 10
