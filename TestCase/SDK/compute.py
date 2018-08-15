@@ -28,7 +28,7 @@ class ServerCreate(CASE.base):
         sla_args = []
         for args in xrange(len(kwargs)):
             sla_args.append(kwargs[args].values()[0])
-        step_result = SLA.wait_for_vm_stat(self.SDKconnect, self.context['server'], sla_args[0]['status'],
+        step_result = SLA.vm_state_check_in_openstack(self.SDKconnect, self.context['server'], sla_args[0]['status'],
                                            sla_args[0]['wait'])
         vm_ip = self.SDKconnect.get_server_public_ip(self.context['server'])
         step_result = step_result and SLA.vm_check_linux_host(vm_ip, sla_args[1]['username'], sla_args[1]['password'])
