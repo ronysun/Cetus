@@ -1,7 +1,5 @@
-import openstack.connection as connection
 import functools
 import logging
-from common import auth
 
 LOG = logging.getLogger('testlog')
 

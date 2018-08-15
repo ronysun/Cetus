@@ -4,8 +4,15 @@ SDK.compute.ServerCreate:
         name: test2
         image: Cetus_cirros
         flavor: mini.ty1
+        network: ext_xx
+        wait: True
+        admin_pass: ADMIN_PASS
 
   sla:
     - get_server_status:
-        wait: 5
+        wait: 10
         status: active
+
+    - ssh server:
+        username: cirros
+        password: cubswin:)
