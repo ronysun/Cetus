@@ -32,8 +32,8 @@ def instance_case_class(module, _class_name, case_path="TestCase", **kwargs):
         _class = getattr(_module_instance, _class_name)
         case = _class(**kwargs)
         return case
-    except ImportError:
-        LOG.error("Not found module: %s, or class: %s" % (_module, _class_name))
+    except Exception as e:
+        LOG.error(e)
 
 def setup_test_env():
     test_image_name = 'Cetus_cirros'
